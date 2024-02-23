@@ -11,6 +11,7 @@ public class Main {
         System.out.println("Welcome to Task (stream) manager");
         DataManager dataManager = new DataManager("./data/data.txt");
         ArrayList<Task> tasksData = dataManager.loadData();
+        ArrayList<Task> filteredList = filterTasksByString(tasksData, "11");
 
 //        System.out.println("Printing all data ...");
 //        printAllData(tasksData);
@@ -21,7 +22,9 @@ public class Main {
 //        System.out.println("Total number of deadlines: " + countDeadlines(tasksData));
 
         //printAllDataUsingStreams(tasksData);
-        printAllDeadlineUsingStreams(tasksData);
+        taskComparator(tasksData);
+        System.out.println("Filtered List");
+        printAllData(filteredList);
         System.out.println("Total number of deadlines: " + countDeadlinesUsingStreams(tasksData));
     }
 
@@ -66,5 +69,19 @@ public class Main {
         return (int) tasksData.stream()
                 .filter((t) -> t instanceof Deadline)
                 .count();
+    }
+
+    public static void taskComparator(ArrayList<Task> tasksData) {
+        tasksData.stream()
+                .filter((t) -> t instanceof Deadline)
+                .sorted((t1, t2) -> t1.getDescription().compareTo(t2.getDescription()))
+                .forEach(System.out::println);
+    }
+
+    public static ArrayList<Task> filterTasksByString(ArrayList<Task> tasksData, String filterString) {
+        ArrayList<Task> filteredList = (ArrayList<Task>) tasksData.stream()
+                .filter((t) -> t.getDescription().contains(filterString))
+                .toList();
+        return filteredList;
     }
 }
